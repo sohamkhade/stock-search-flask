@@ -1,0 +1,399 @@
+<!doctype html>
+<head>
+    <title>Stock Search</title>
+    <link rel="stylesheet" type="text/css" href="../static/styles.css"/>
+    <script src="../static/web.js"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/accessibility.js"></script>
+    <style>
+        /* Style the tab */
+        .navbar {
+            overflow: hidden;
+            background-color: #f1f1f1;
+            display: none;
+
+        }
+
+        /* Style the buttons inside the tab */
+        .navbar button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+        /* Change background color of buttons on hover */
+        .navbar button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .navbar button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .content-data {
+            display: none;
+            padding: 6px 12px;
+            border: none;
+        }
+    </style>
+    <script language="JavaScript">
+
+        // async function getCompanyAPI() {
+        //     const x = document.getElementById("search-input").value;
+        //     let company = {stock_ticker_symbol: ""}
+        //     fetch('/company/' + `${x}`)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.no_data === "No data found") {
+        //                 document.getElementsByClassName("data-tab")[0].style.display = "none";
+        //                 console.log("Empty Data");
+        //                 document.getElementById("no-data").style.display = "block";
+        //             } else {
+        //                 company.stock_ticker_symbol = data.ticker;
+        //                 document.getElementById("no-data").style.display = "none";
+        //                 document.getElementsByClassName("data-tab")[0].style.display = "block";
+        //                 console.log(data);
+        //                 document.getElementById("defaultOpen").click();
+        //                 document.getElementsByClassName("navbar")[0].style.display = "block";
+        //                 document.getElementById("company-icon").src = data.logo;
+        //                 document.getElementById("company-name").innerText = data.name;
+        //                 document.getElementById("stock-ticker-symbol").innerText = data.ticker;
+        //                 document.getElementById("stock-exchange-code").innerText = data.exchange;
+        //                 document.getElementById("company-start-date").innerText = data.ipo;
+        //                 document.getElementById("category").innerText = data.finnhubIndustry;
+        //             }
+        //
+        //         })
+        //         .catch(err => {
+        //                 console.log(err);
+        //                 console.log("error while fetching");
+        //             }
+        //         );
+        //
+        //     fetch('/company/quote/' + `${x}`)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.no_data === "no data found") {
+        //                 document.getElementsByClassName("data-tab")[0].style.display = "none";
+        //                 console.log("Empty Data");
+        //                 document.getElementById("no-data").style.display = "block";
+        //             } else {
+        //                 const months = [
+        //                     "January",
+        //                     "February",
+        //                     "March",
+        //                     "April",
+        //                     "May",
+        //                     "June",
+        //                     "July",
+        //                     "August",
+        //                     "September",
+        //                     "October",
+        //                     "November",
+        //                     "December"
+        //                 ];
+        //                 let date = new Date(data.t);
+        //                 const d = date.getDate() + " " + months[date.getMonth()] + ", " + date.getFullYear();
+        //                 document.getElementById("no-data").style.display = "none";
+        //                 document.getElementsByClassName("data-tab")[0].style.display = "block";
+        //                 console.log(data);
+        //                 document.getElementsByClassName("navbar")[0].style.display = "block";
+        //                 document.getElementById("summary-symbol").innerText = data.ticker;
+        //                 document.getElementById("summary-day").innerText = d;
+        //                 document.getElementById("summary-closing-price").innerText = data.pc;
+        //                 document.getElementById("summary-opening-price").innerText = data.o;
+        //                 document.getElementById("summary-high-price").innerText = data.h;
+        //                 document.getElementById("summary-low-price").innerText = data.l;
+        //                 document.getElementById("summary-change-text").innerText = data.d;
+        //                 document.getElementById("summary-change-percent-text").innerText = data.dp;
+        //                 if (data.d > 0) {
+        //                     document.getElementById("summary-change-img").src = 'static/GreenArrowUp.png';
+        //                 } else {
+        //                     document.getElementById("summary-change-img").src = 'static/RedArrowDown.png';
+        //                 }
+        //                 if (data.dp > 0) {
+        //                     document.getElementById("summary-change-percent-img").src = 'static/GreenArrowUp.png';
+        //                 } else {
+        //                     document.getElementById("summary-change-percent-img").src = 'static/RedArrowDown.png';
+        //                 }
+        //             }
+        //         })
+        //         .catch(err => {
+        //                 console.log(err);
+        //                 console.log("error while fetching");
+        //             }
+        //         );
+        //
+        //     fetch('/company/recommendation-trends/' + `${x}`)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             console.log(data);
+        //
+        //         })
+        //         .catch(err => {
+        //                 console.log(err);
+        //                 console.log("error while fetching");
+        //             }
+        //         );
+        //
+        //     highcharts();
+        // }
+        //
+        // function clearInput() {
+        //     console.log("clear");
+        //     document.getElementById("search-input").value = "";
+        //     var arr = document.getElementsByClassName("data-tab");
+        //     arr[0].style.display = "none";
+        //     document.getElementById("no-data").style.display = "none ";
+        // }
+        //
+        // function openContentData(evt, cityName) {
+        //     var i, tabcontent, tablinks;
+        //     tabcontent = document.getElementsByClassName("content-data");
+        //     for (i = 0; i < tabcontent.length; i++) {
+        //         tabcontent[i].style.display = "none";
+        //     }
+        //     tablinks = document.getElementsByClassName("navlinks");
+        //     for (i = 0; i < tablinks.length; i++) {
+        //         tablinks[i].className = tablinks[i].className.replace(" active", "");
+        //     }
+        //     document.getElementById(cityName).style.display = "block";
+        //     evt.currentTarget.className += " active";
+        // }
+        //
+        // // Get the element with id="defaultOpen" and click on it
+        //
+        // async function highcharts() {
+        //     const data = await fetch(
+        //         'https://demo-live-data.highcharts.com/aapl-c.json'
+        //     ).then(response => response.json());
+        //
+        //     // Create the chart
+        //     Highcharts.stockChart('container', {
+        //
+        //         rangeSelector: {
+        //             selected: 1
+        //         },
+        //
+        //         title: {
+        //             text: 'AAPL Stock Price'
+        //         },
+        //
+        //         navigator: {
+        //             series: {
+        //                 accessibility: {
+        //                     exposeAsGroupOnly: true
+        //                 }
+        //             }
+        //         },
+        //
+        //         series: [{
+        //             name: 'AAPL Stock Price',
+        //             data: data,
+        //             type: 'area',
+        //             threshold: null,
+        //             tooltip: {
+        //                 valueDecimals: 2
+        //             },
+        //             fillColor: {
+        //                 linearGradient: {
+        //                     x1: 0,
+        //                     y1: 0,
+        //                     x2: 0,
+        //                     y2: 1
+        //                 },
+        //                 stops: [
+        //                     [0, Highcharts.getOptions().colors[0]],
+        //                     [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+        //                 ]
+        //             }
+        //         }]
+        //     });
+        // }
+
+    </script>
+</head>
+<body class="body-section">
+<!--<img src="{{url_for('static', filename='back.svg')}}" height="200px" width="200px" alt="not image"/>-->
+
+<div class="section-1 ">
+    <h1 class="center" style="font-weight: normal;">Stock Search</h1>
+    <form class="form-container center" onsubmit="return false">
+        <button class="form-container-button-1-div" onclick="getCompanyAPI()">
+            <img src="../static/search-solid.svg"
+                 class="search-img center"
+                 width="40%" height="40%"/>
+        </button>
+        <div class="form-container-input-text-div">
+            <input class="form-input-field" placeholder="Enter Stock Ticker Symbol" type="text" id="search-input"
+                   name="input-text" required=true/>
+        </div>
+        <button class="form-container-button-2-div" onclick="clearInput()" type="reset">
+            <img src="../static/times-solid.svg" width="50%"
+                 height="50%"/>
+        </button>
+    </form>
+</div>
+<div class="section-2 " style="margin-bottom: 5%">
+    <div class="data-tab">
+        <div class="navbar">
+            <button class="navlinks" onclick="openContentData(event, 'company')" id="defaultOpen">Company</button>
+            <button class="navlinks" onclick="openContentData(event, 'summary')">Stock Summary</button>
+            <button class="navlinks" onclick="openContentData(event, 'charts')">Charts</button>
+            <button class="navlinks" onclick="openContentData(event, 'news')">Latest News</button>
+        </div>
+
+        <div id="company" class="content-data">
+            <div class="show-company ">
+                <div class="center">
+                    <img id="company-icon" src="" height="100px" width="100px"/>
+                </div>
+                <table class="table-container center" width="50% 50%">
+                    <tr class="table-row-container">
+                        <td class=" table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Company Name</b>
+                        </td>
+                        <td class=" table-row-data-container" id="company-name" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="table-row-container">
+                        <td class=" table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Stock Ticker Symbol</b>
+                        </td>
+                        <td class=" table-row-data-container" id="stock-ticker-symbol" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="table-row-container">
+                        <td class=" table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Stock Exchange Code</b>
+                        </td>
+                        <td class="table-row-data-container" id="stock-exchange-code" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="table-row-container">
+                        <td class="table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Company Start Date</b>
+                        </td>
+                        <td class="table-row-data-container" id="company-start-date" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="table-row-container">
+                        <td class=" table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Category</b>
+                        </td>
+                        <td class="table-row-data-container" id="category" colspan="1" style="padding-left: 1%"></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+        <div id="summary" class="content-data">
+            <div class="show-summary ">
+                <table class="summary-table-container center" width="50% 50%">
+                    <tr class="summary-table-row-container">
+                        <td class=" summary-table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Stock Ticker Symbol</b>
+                        </td>
+                        <td class=" summary-table-row-data-container" id="summary-symbol" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="summary-table-row-container">
+                        <td class=" summary-table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Trading Day</b>
+                        </td>
+                        <td class=" summary-table-row-data-container" id="summary-day" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="summary-table-row-container">
+                        <td class=" summary-table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Previous Closing Price</b>
+                        </td>
+                        <td class="summary-table-row-data-container" id="summary-closing-price" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="summary-table-row-container">
+                        <td class="summary-table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Opening Price</b>
+                        </td>
+                        <td class="summary-table-row-data-container" id="summary-opening-price" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="summary-table-row-container">
+                        <td class=" summary-table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>High Price</b>
+                        </td>
+                        <td class="summary-table-row-data-container" id="summary-high-price" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="summary-table-row-container">
+                        <td class=" summary-table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Low Price</b>
+                        </td>
+                        <td class="summary-table-row-data-container" id="summary-low-price" colspan="1"
+                            style="padding-left: 1%"></td>
+                    </tr>
+                    <tr class="summary-table-row-container">
+                        <td class=" summary-table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Change</b>
+                        </td>
+                        <td class="summary-table-row-data-container" id="summary-change" colspan="1"
+                            style="padding-left: 1%">
+                            <span id="summary-change-text"></span>
+                            <span><img id="summary-change-img" height="15px" width="15px"/></span>
+                        </td>
+                    </tr>
+                    <tr class="summary-table-row-container">
+                        <td class=" summary-table-row-data-container text-right" colspan="1" style="padding-right: 1%">
+                            <b>Change Percent</b>
+                        </td>
+                        <td class="summary-table-row-data-container" id="summary-change-percent" colspan="1"
+                            style="padding-left: 1%;">
+                            <span id="summary-change-percent-text" style=""></span>
+                            <span><img id="summary-change-percent-img" style="" height="15px" width="15px"/></span></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="show-recommendations" style="margin-top: 2%; display: flex; justify-content: center; height: 50px; color: white;">
+                <div style=" display: flex; flex-direction: column; justify-content: center;color: #ea3037;margin-right: 1%; text-align: center; font-size: 1.3rem;"><p style="margin: 0;">Strong</p><p style="margin: 0;">Sell</p></div>
+                <div style ="display: flex; flex-direction: row; font-size: 1.5rem; font-weight: bold">
+                    <div id = "recommendation-1" style="background-color: #ea3037;width: 50px; display: flex; justify-content: center; align-items: center;">0</div>
+                    <div id = "recommendation-2" style="background-color: #b45c4c;width: 50px; display: flex; justify-content: center; align-items: center;">0</div>
+                    <div id = "recommendation-3" style="background-color: #8aa776;width: 50px; display: flex; justify-content: center; align-items: center;">0</div>
+                    <div id = "recommendation-4" style="background-color: #63d38b;width: 50px; display: flex; justify-content: center; align-items: center;">0</div>
+                    <div id = "recommendation-5" style="background-color: #55f5a5;width: 50px; display: flex; justify-content: center; align-items: center;">0</div>
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center;color: #55f5a5; margin-left: 1%; text-align: center; font-size: 1.3rem;"><p style="margin: 0;">Strong</p><p style="margin: 0;">Buy</p></div>
+            </div>
+            <div style="margin: 2%;font-size: 1.5rem; display: flex; justify-content: center; align-items: center">Recommendation Trends</div>
+        </div>
+
+        <div id="charts" class="content-data" >
+            <div id="charts-container">
+
+            </div>
+        </div>
+        <div id="news" class="content-data" style="padding: 0;" >
+            <div id="news-container">
+            </div>
+        </div>
+    </div>
+
+    <div class="error-message" id="no-data" style="font-weight: normal;">
+        <p>Error: No record has been found, please enter a valid symbol.</p>
+    </div>
+
+
+</div>
+
+
+</body>
